@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express"
 import bcrypt from "bcrypt"
 import jwt, { JwtPayload } from "jsonwebtoken"
 import { validateToken } from "../middleware/validateToken"
+import { User, IUser } from "../models/User"
 
 const router: Router = Router()
 
