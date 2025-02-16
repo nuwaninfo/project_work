@@ -3,6 +3,7 @@ import path from "path"
 import router from "./src/routes/user"
 import dotenv from "dotenv"
 import mongoose, { Connection } from "mongoose"
+import cors, { CorsOptions } from "cors"
 
 dotenv.config()
 
@@ -16,6 +17,11 @@ const db: Connection = mongoose.connection
 
 db.on("error", console.error.bind(console, "MongoDB connection error"))
 
+const corsOptions: CorsOptions = {
+  origin: "http://localhost:3000",
+  optionsSuccessStatus: 200,
+}
+app.use(cors(corsOptions))
 app.use(express.json())
 
 app.listen(port, () => {

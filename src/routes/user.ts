@@ -16,7 +16,7 @@ const router: Router = Router()
 
 // Register a new user
 router.post(
-  "/register",
+  "/user/register",
   registerValdations,
   async (req: Request, res: Response) => {
     try {
@@ -67,6 +67,34 @@ router.post(
     }
   }
 )
+
+router.post("/user/login", async (req: Request, res: Response) => {
+  try {
+    const email: string = req.body.email
+    const password: string = req.body.password
+
+    const user: IUser | null = await User.findOne({ email })
+
+    if (!user) {
+      return res.status(401).json({ message: "Login failed" })
+    }
+
+    if (bcrypt.compareSync(password, user.password)) {
+      const jwtPayload: JwtPayload = {
+        email: user.email,
+      }
+      const token: string = jwt.sign(jwtPayload, process.env.SECRET as string, {
+        expiresIn: "10m",
+      })
+
+      return res.status(200).json({ success: true, token })
+    }
+    return res.status(401).json({ message: "Login failed" })
+  } catch (error: any) {
+    console.error(`Error during user login: ${error}`)
+    return res.status(500).json({ error: "Internal Server Error" })
+  }
+})
 
 // List all users
 router.get("/", async (req: Request, res: Response) => {
