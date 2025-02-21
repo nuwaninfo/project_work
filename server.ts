@@ -1,6 +1,6 @@
 import express, { Express } from "express"
 import path from "path"
-import router from "./src/routes/user"
+import rootRouter from "./src/routes"
 import dotenv from "dotenv"
 import mongoose, { Connection } from "mongoose"
 import cors, { CorsOptions } from "cors"
@@ -28,6 +28,6 @@ app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 })
 
-app.use("/api/v1/", router)
+app.use("/api/v1/", rootRouter)
 
 app.use(express.static(path.join(__dirname, "../public")))

@@ -12,10 +12,10 @@ import { User, IUser } from "../models/User"
 import { registerValdations } from "../utils/validations"
 import { errorCreator } from "../utils/error-creator"
 
-const router: Router = Router()
+const userRouter: Router = Router()
 
 // Register a new user
-router.post(
+userRouter.post(
   "/user/register",
   registerValdations,
   async (req: Request, res: Response) => {
@@ -60,7 +60,7 @@ router.post(
       // Save user in the database
       await user.save()
 
-      return res.status(200).json(user)
+      return res.status(200).json({ msg: "Registration is successful" })
     } catch (error: any) {
       console.error(`Error during registration: ${error}`)
       return res.status(500).json({ error: "Internal Server Error" })
@@ -68,7 +68,7 @@ router.post(
   }
 )
 
-router.post("/user/login", async (req: Request, res: Response) => {
+userRouter.post("/login", async (req: Request, res: Response) => {
   try {
     const email: string = req.body.email
     const password: string = req.body.password
@@ -97,7 +97,7 @@ router.post("/user/login", async (req: Request, res: Response) => {
 })
 
 // List all users
-router.get("/", async (req: Request, res: Response) => {
+userRouter.get("/", async (req: Request, res: Response) => {
   try {
     const users: IUser[] = await User.find()
     return res.status(200).json(users)
@@ -108,7 +108,7 @@ router.get("/", async (req: Request, res: Response) => {
 })
 
 // Get one user
-router.get("/:id", async (req: Request, res: Response) => {
+userRouter.get("/:id", async (req: Request, res: Response) => {
   try {
     const user: IUser | null = await User.findOne({ _id: req.params.id })
     return res.status(200).json(user)
@@ -118,4 +118,4 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
 })
 
-export default router
+export default userRouter
