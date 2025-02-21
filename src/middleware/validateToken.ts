@@ -8,7 +8,7 @@ interface CustomRequest extends Request {
   user?: JwtPayload
 }
 
-export const validateToken = (
+const validateToken = (
   req: CustomRequest,
   res: Response,
   next: NextFunction
@@ -29,3 +29,4 @@ export const validateToken = (
     res.status(401).json({ message: "Access denied, missing token" })
   }
 }
+export { validateToken, CustomRequest }

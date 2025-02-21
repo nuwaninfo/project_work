@@ -16,7 +16,7 @@ const userRouter: Router = Router()
 
 // Register a new user
 userRouter.post(
-  "/user/register",
+  "/register",
   registerValdations,
   async (req: Request, res: Response) => {
     try {
@@ -81,6 +81,7 @@ userRouter.post("/login", async (req: Request, res: Response) => {
 
     if (bcrypt.compareSync(password, user.password)) {
       const jwtPayload: JwtPayload = {
+        _id: user._id,
         email: user.email,
       }
       const token: string = jwt.sign(jwtPayload, process.env.SECRET as string, {

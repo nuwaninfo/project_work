@@ -1,24 +1,34 @@
 import { Request, Response, Router } from "express"
 import { KanbanBoard, IKanbanBoard } from "../models/KanbanBoard"
+import { validateToken, CustomRequest } from "../middleware/validateToken"
 
 const boardRouter: Router = Router()
 
 // Save the column count in the Board table
-boardRouter.post("/saveColumnCount", async (req: Request, res: Response) => {
-  try {
-    const userId: string = req.body.userId
-    const columnCount: number = req.body.password
+boardRouter.post(
+  "/saveColumnCount",
+  [validateToken],
+  async (req: CustomRequest, res: Response) => {
+    try {
+      if (!req.user) {
+        res.status(401).json({ message: "Access denied." })
+      }
+      //console.log(req.user)
+      console.log(req.user?.email)
+      //const userId: string = req.user._id
+      const columnCount: number = req.body.columnCount
 
-    const board: IKanbanBoard = new KanbanBoard({
-      columnCount: columnCount,
-      user: req.body.userId,
-    })
-    await board.save()
-    console.log("Board saved!")
-  } catch (error: any) {
-    console.log(`Error while fecthing an user ${error}`)
-    return res.status(500).json({ error: "Internal Server Error" })
+      const board: IKanbanBoard = new KanbanBoard({
+        columnCount: columnCount,
+        user: req.user?._id,
+      })
+      await board.save()
+      res.status(201).json({ columnCount: columnCount })
+    } catch (error: any) {
+      console.log(`Error while fecthing an user ${error}`)
+      res.status(500).json({ error: "Internal Server Error" })
+    }
   }
-})
+)
 
 export default boardRouter
