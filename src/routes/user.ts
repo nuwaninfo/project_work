@@ -12,7 +12,14 @@ import { User, IUser } from "../models/User"
 import { registerValdations } from "../utils/validations"
 import { errorCreator } from "../utils/error-creator"
 
+import dotenv from "dotenv"
+
 const userRouter: Router = Router()
+dotenv.config()
+
+interface CustomRequest extends Request {
+  user?: JwtPayload
+}
 
 // Register a new user
 userRouter.post(
@@ -116,6 +123,26 @@ userRouter.get("/:id", async (req: Request, res: Response) => {
   } catch (error: any) {
     console.log(`Error while fecthing an user ${error}`)
     return res.status(500).json({ error: "Internal Server Error" })
+  }
+})
+
+// This api is used to validate token. The purpose of this is when user first
+// access the web application, threre can be a token in front side but
+// it may be invallid because of expiration. So user can  be directed to the login page
+userRouter.post("/validate-token", (req: Request, res: Response) => {
+  const token: string = req.body.token
+
+  if (!token) return res.status(401).json({ message: "Token is missing" })
+
+  try {
+    const verified: JwtPayload = jwt.verify(
+      token,
+      process.env.SECRET as string
+    ) as JwtPayload
+
+    console.log(verified)
+  } catch (error: any) {
+    res.status(401).json({ message: "Access denied, missing token 2" })
   }
 })
 

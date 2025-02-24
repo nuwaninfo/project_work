@@ -16,17 +16,18 @@ const validateToken = (
   const token: string | undefined = req.header("authorization")?.split(" ")[1]
 
   if (!token)
-    return res.status(401).json({ message: "Access denied, missing token" })
+    return res.status(401).json({ message: "Access denied, missing token 1" })
 
   try {
     const verified: JwtPayload = jwt.verify(
       token,
       process.env.SECRET as string
     ) as JwtPayload
+
     req.user = verified
     next()
   } catch (error: any) {
-    res.status(401).json({ message: "Access denied, missing token" })
+    res.status(401).json({ message: "Access denied, missing token 2" })
   }
 }
 export { validateToken, CustomRequest }

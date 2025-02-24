@@ -13,9 +13,7 @@ boardRouter.post(
       if (!req.user) {
         res.status(401).json({ message: "Access denied." })
       }
-      //console.log(req.user)
-      console.log(req.user?.email)
-      //const userId: string = req.user._id
+
       const columnCount: number = req.body.columnCount
 
       const board: IKanbanBoard = new KanbanBoard({
