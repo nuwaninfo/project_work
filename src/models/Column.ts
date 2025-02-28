@@ -1,13 +1,13 @@
 import mongoose, { Document, Schema, Model } from "mongoose"
 
 interface IColumn extends Document {
-  title: string
+  columnName: string
   user: mongoose.Types.ObjectId
 }
 
 const ColumnSchema: Schema = new Schema<IColumn>(
   {
-    title: { type: String, required: true },
+    columnName: { type: String, required: true },
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
   {

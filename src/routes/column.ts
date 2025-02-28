@@ -6,7 +6,7 @@ const columnRouter: Router = Router()
 
 // Add a new column
 columnRouter.post(
-  "/add",
+  "/",
   [validateToken],
   async (req: CustomRequest, res: Response) => {
     try {
@@ -14,14 +14,45 @@ columnRouter.post(
         res.status(401).json({ message: "Access denied." })
       }
 
-      const title: string = req.body.columnTitle
+      const columnName: string = req.body.columnName
 
       const column: IColumn = new Column({
-        title: title,
+        columnName: columnName,
         user: req.user?._id,
       })
       await column.save()
-      res.status(201).json({ columnTitle: title })
+
+      // Fetch column names and IDs associated with the logged-in user
+      const columns: { _id: string; columnName: string }[] = await Column.find(
+        { user: req.user?._id },
+        { columnName: 1, _id: 1 }
+      )
+
+      res.status(201).json({ columns: columns })
+    } catch (error: any) {
+      console.log(`Error while fecthing an user ${error}`)
+      res.status(500).json({ error: "Internal Server Error" })
+    }
+  }
+)
+
+// Get all columns
+columnRouter.get(
+  "/",
+  [validateToken],
+  async (req: CustomRequest, res: Response) => {
+    try {
+      if (!req.user) {
+        res.status(401).json({ message: "Access denied." })
+      }
+
+      // Fetch column names and IDs associated with the logged-in user
+      const columns: { _id: string; columnName: string }[] = await Column.find(
+        { user: req.user?._id },
+        { columnName: 1, _id: 1 }
+      )
+
+      res.status(201).json({ columns: columns })
     } catch (error: any) {
       console.log(`Error while fecthing an user ${error}`)
       res.status(500).json({ error: "Internal Server Error" })

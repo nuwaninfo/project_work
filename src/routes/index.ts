@@ -7,6 +7,6 @@ const rootRouter: Router = Router()
 
 rootRouter.use("/user", userRouter)
 rootRouter.use("/board", boardRouter)
-rootRouter.use("/board", columnRouter)
+rootRouter.use("/column", columnRouter)
 
 export default rootRouter
