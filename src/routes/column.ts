@@ -28,7 +28,9 @@ columnRouter.post(
         { columnName: 1, _id: 1 }
       )
 
-      res.status(201).json({ columns: columns })
+      res
+        .status(201)
+        .json({ message: "column added sucessfully", columns: columns })
     } catch (error: any) {
       console.log(`Error while fecthing columns ${error}`)
       res.status(500).json({ error: "Internal Server Error" })
