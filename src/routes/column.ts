@@ -30,7 +30,7 @@ columnRouter.post(
 
       res.status(201).json({ columns: columns })
     } catch (error: any) {
-      console.log(`Error while fecthing an user ${error}`)
+      console.log(`Error while fecthing columns ${error}`)
       res.status(500).json({ error: "Internal Server Error" })
     }
   }
@@ -54,8 +54,41 @@ columnRouter.get(
 
       res.status(201).json({ columns: columns })
     } catch (error: any) {
-      console.log(`Error while fecthing an user ${error}`)
+      console.log(`Error while fecthing columns ${error}`)
       res.status(500).json({ error: "Internal Server Error" })
+    }
+  }
+)
+
+// Delete a column
+columnRouter.delete(
+  "/:id",
+  validateToken,
+  async (req: CustomRequest, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Access denied." })
+      }
+
+      const deleteColumn = await Column.deleteOne({
+        _id: req.params.id,
+      })
+      const columns: { _id: string; columnName: string }[] = await Column.find(
+        { user: req.user?._id },
+        { columnName: 1, _id: 1 }
+      )
+
+      if (deleteColumn.deletedCount === 1) {
+        return res
+          .status(200)
+          .json({ message: "Column deleted successfully.", columns })
+      } else {
+        return res
+          .status(200)
+          .json({ message: "Column not found or already deleted.", columns })
+      }
+    } catch (error: any) {
+      console.error("Error deleting topic:", error)
     }
   }
 )

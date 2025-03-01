@@ -92,7 +92,7 @@ userRouter.post("/login", async (req: Request, res: Response) => {
         email: user.email,
       }
       const token: string = jwt.sign(jwtPayload, process.env.SECRET as string, {
-        expiresIn: "10m",
+        expiresIn: "30m",
       })
 
       return res.status(200).json({ success: true, token })
