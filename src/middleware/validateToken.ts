@@ -6,6 +6,7 @@ dotenv.config()
 
 interface CustomRequest extends Request {
   user?: JwtPayload
+  columnId?: string
 }
 
 const validateToken = (

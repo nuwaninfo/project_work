@@ -75,34 +75,55 @@ userRouter.post(
   }
 )
 
-userRouter.post("/login", async (req: Request, res: Response) => {
-  try {
-    const email: string = req.body.email
-    const password: string = req.body.password
+userRouter.post(
+  "/login",
+  registerValdations,
+  async (req: Request, res: Response) => {
+    try {
+      // Validate and sanitize the incoming data
+      const errors: Result<ValidationError> = validationResult(req)
 
-    const user: IUser | null = await User.findOne({ email })
+      if (!errors.isEmpty()) {
+        const errMsgArr: Record<string, string> = errorCreator(errors.array())
 
-    if (!user) {
-      return res.status(401).json({ message: "Login failed" })
-    }
-
-    if (bcrypt.compareSync(password, user.password)) {
-      const jwtPayload: JwtPayload = {
-        _id: user._id,
-        email: user.email,
+        // If there are errors show them to clint side
+        return res.status(400).json({ errors: errMsgArr })
       }
-      const token: string = jwt.sign(jwtPayload, process.env.SECRET as string, {
-        expiresIn: "30m",
-      })
 
-      return res.status(200).json({ success: true, token })
+      // Get the validated, sanitized data from req object
+      const saitizedData: IUser = matchedData(req)
+
+      const email: string = saitizedData.email
+      const password: string = saitizedData.password
+
+      const user: IUser | null = await User.findOne({ email })
+
+      if (!user) {
+        return res.status(401).json({ message: "Login failed" })
+      }
+
+      if (bcrypt.compareSync(password, user.password)) {
+        const jwtPayload: JwtPayload = {
+          _id: user._id,
+          email: user.email,
+        }
+        const token: string = jwt.sign(
+          jwtPayload,
+          process.env.SECRET as string,
+          {
+            expiresIn: "30m",
+          }
+        )
+
+        return res.status(200).json({ success: true, token })
+      }
+      return res.status(401).json({ message: "Login failed" })
+    } catch (error: any) {
+      console.error(`Error during user login: ${error}`)
+      return res.status(500).json({ error: "Internal Server Error" })
     }
-    return res.status(401).json({ message: "Login failed" })
-  } catch (error: any) {
-    console.error(`Error during user login: ${error}`)
-    return res.status(500).json({ error: "Internal Server Error" })
   }
-})
+)
 
 // List all users
 userRouter.get("/", async (req: Request, res: Response) => {

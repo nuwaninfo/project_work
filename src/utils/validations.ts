@@ -11,7 +11,7 @@ const registerValdations: ValidationChain[] = [
   body("password")
     .trim()
     .notEmpty()
-    .withMessage("Password not found")
+    .withMessage("Please enter password")
     .isStrongPassword({
       minLength: 8,
       minLowercase: 2,
