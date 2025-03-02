@@ -50,7 +50,11 @@ userRouter.post(
 
       // Send respose if user already exists
       if (existingUser) {
-        return res.status(403).json({ email: "email already in use" })
+        return res.status(200).json({
+          status: "error",
+          msg: "Email is already in use",
+          user: email,
+        })
       }
 
       // Generate salt
@@ -67,7 +71,11 @@ userRouter.post(
       // Save user in the database
       await user.save()
 
-      return res.status(200).json({ msg: "Registration is successful" })
+      return res.status(200).json({
+        status: "success",
+        msg: "Registration is successful",
+        user: email,
+      })
     } catch (error: any) {
       console.error(`Error during registration: ${error}`)
       return res.status(500).json({ error: "Internal Server Error" })
