@@ -119,7 +119,7 @@ userRouter.post(
           jwtPayload,
           process.env.SECRET as string,
           {
-            expiresIn: "30m",
+            expiresIn: "60m",
           }
         )
 
